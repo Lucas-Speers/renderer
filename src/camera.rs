@@ -19,6 +19,8 @@ pub struct Camera {
     veiwport_hight: f64,
     veiwport_width: f64,
 
+    depth_of_field_blur: f64,
+
     pixel00_loc: Vec3,
     pixel_delta_u: Vec3,
     pixel_delta_v: Vec3,
@@ -90,7 +92,9 @@ impl Camera {
         let offset = sample_square();
         let pixel_sample = self.pixel00_loc + (self.pixel_delta_u * (w + offset.x)) + (self.pixel_delta_v * (h + offset.y));
 
-        Ray::new(self.camera_center, pixel_sample - self.camera_center)
+        let blur = Vec3::random_vector() * self.depth_of_field_blur;
+
+        Ray::new(self.camera_center + blur, pixel_sample - self.camera_center - blur)
     }
 
     fn ray_color(ray: &Ray, world: Arc<HittableList>, depth: usize) -> Color {
@@ -114,7 +118,7 @@ pub struct CameraBuilder {
     pub vfov: f64,
     pub camera_center: Vec3,
     pub look_at: Vec3,
-    
+    pub depth_of_field_blur: f64,
 
     pub thread_count: usize,
     pub max_depth: usize,
@@ -166,9 +170,9 @@ impl CameraBuilder {
 
         let vup = Vec3::new(0.0, 1.0, 0.0);
 
-        let w = (self.camera_center - self.look_at).unit();
-        let u = cross(vup, w).unit();
-        let v = cross(w, u);
+        let w = (self.camera_center - self.look_at).unit(); // forward
+        let u = cross(vup, w).unit(); // camera right
+        let v = cross(w, u); // camera up
 
         let viewport_u = u * veiwport_width;
         let viewport_v = v * -veiwport_hight;
@@ -179,6 +183,6 @@ impl CameraBuilder {
         let veiwport_upper_left = self.camera_center - (w * focal_length) - (viewport_u/2.0) - (viewport_v/2.0); // top left of the screen
         let pixel00_loc = veiwport_upper_left + ((pixel_delta_u+pixel_delta_v) * 0.5); // top left pixel
 
-        Camera { image_width, image_hight, aspect_ratio, thread_count: self.thread_count, max_depth: self.max_depth, samples_per_pixel: self.samples_per_pixel, pixel00_loc, pixel_delta_u, pixel_delta_v, camera_center: self.camera_center, focal_length, veiwport_hight, veiwport_width }
+        Camera { image_width, image_hight, aspect_ratio, thread_count: self.thread_count, max_depth: self.max_depth, samples_per_pixel: self.samples_per_pixel, pixel00_loc, pixel_delta_u, pixel_delta_v, camera_center: self.camera_center, focal_length, veiwport_hight, veiwport_width, depth_of_field_blur: self.depth_of_field_blur }
     }
 }
