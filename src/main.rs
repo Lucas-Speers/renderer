@@ -21,13 +21,13 @@ use camera::CameraBuilder;
 
 fn main() {
     let mut world = HittableList::new();
-    let matte_blue = Material::Lambertian(Lambertian { albedo: Color::new(0.1, 0.2, 0.5) });
-    let matte_yellow = Material::Lambertian(Lambertian { albedo: Color::new(0.8, 0.7, 0.0) });
-    let matte_white = Material::Lambertian(Lambertian { albedo: Color::new(1.0, 1.0, 1.0) });
-    let metal = Material::Metal(Metal { albedo: Color::new(0.8, 0.8, 0.8), fuzz: 0.0 });
-    let metal_fuzzy = Material::Metal(Metal { albedo: Color::new(0.8, 0.8, 0.8), fuzz: 1.0 });
-    let glass = Material::Dielectric(Dielectric { refraction_index: 1.5 });
-    let glass_inside = Material::Dielectric(Dielectric { refraction_index: 0.75 });
+    let matte_blue = Lambertian::new(Color::new(0.1, 0.2, 0.5));
+    let matte_yellow = Lambertian::new(Color::new(0.8, 0.7, 0.0));
+    let matte_white = Lambertian::new(Color::new(1.0, 1.0, 1.0));
+    let metal = Metal::new(Color::new(0.8, 0.8, 0.8), 0.0);
+    let metal_fuzzy = Metal::new(Color::new(0.8, 0.8, 0.8), 1.0);
+    let glass = Dielectric::new(1.5);
+    let glass_inside = Dielectric::new(0.75);
 
     world.add(Sphere::new(Vec3::new( 0.0, -100.5, -1.0), 100.0, matte_yellow)); // floor
     world.add(Sphere::new(Vec3::new( 0.0, 0.0,    -1.2), 0.5,   matte_blue));   // center

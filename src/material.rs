@@ -31,6 +31,9 @@ pub struct Metal {
 }
 
 impl Metal {
+    pub fn new(albedo: Color, fuzz: f64) -> Material {
+        Material::Metal(Metal { albedo, fuzz })
+    }
     fn scatter(&self, ray: &Ray, rec: &HitRecord) -> MaterialRecord {
             
         let reflected = ray.direction.reflect(rec.normal) + (Vec3::random_vector() * self.fuzz);
@@ -48,6 +51,9 @@ pub struct Lambertian {
 }
 
 impl Lambertian {
+    pub fn new(albedo: Color) -> Material {
+        Material::Lambertian(Lambertian { albedo })
+    }
     fn scatter(&self, _ray: &Ray, rec: &HitRecord) -> MaterialRecord {
 
         let mut scatter_direction = rec.normal + Vec3::random_vector().unit();
@@ -69,6 +75,9 @@ pub struct Dielectric {
 }
 
 impl Dielectric {
+    pub fn new(refraction_index: f64) -> Material {
+        Material::Dielectric(Dielectric { refraction_index })
+    }
     fn scatter(&self, ray: &Ray, rec: &HitRecord) -> MaterialRecord {
         let attenuation = Color::new(1.0, 1.0, 1.0);
 
